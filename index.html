@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mi Caja - Ventas y ganancias</title>
+<meta name="description" content="Registro de ventas y ganancias con reconocimiento de productos por foto.">
+<meta name="theme-color" content="#0f9d58">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi Caja">
+<style>
+:root{
+  --bg:#f4f6f8;--card:#ffffff;--text:#16202a;--muted:#6b7785;--border:#e2e7ec;
+  --accent:#0f9d58;--accent-d:#0b7a44;--accent-soft:#e3f5ea;--blue:#2f6fed;--blue-soft:#e6eefc;
+  --est:#9aa7b5;--real:#0f9d58;--danger:#d93025;--danger-soft:#fdeceb;--warn:#b26a00;--warn-soft:#fff4e0;
+  --shadow:0 1px 2px rgba(16,32,48,.06),0 4px 14px rgba(16,32,48,.06);
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f151b;--card:#18212a;--text:#e8edf2;--muted:#93a1af;--border:#27323d;
+    --accent:#34c27a;--accent-d:#27a665;--accent-soft:#143325;--blue:#6b9bff;--blue-soft:#1b2a45;
+    --est:#6b7a89;--real:#34c27a;--danger:#ff6b60;--danger-soft:#3a1c1a;--warn:#f2b45a;--warn-soft:#3a2c12;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f151b;--card:#18212a;--text:#e8edf2;--muted:#93a1af;--border:#27323d;
+  --accent:#34c27a;--accent-d:#27a665;--accent-soft:#143325;--blue:#6b9bff;--blue-soft:#1b2a45;
+  --est:#6b7a89;--real:#34c27a;--danger:#ff6b60;--danger-soft:#3a1c1a;--warn:#f2b45a;--warn-soft:#3a2c12;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;padding-bottom:86px}
+button,input,select{font:inherit;color:inherit}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);display:flex;align-items:center;gap:10px;padding:12px 16px 8px}
+header.top h1{font-size:19px;margin:0;flex:1;letter-spacing:-.2px}
+.icon-btn{border:1px solid var(--border);background:var(--card);border-radius:12px;width:40px;height:40px;display:grid;place-items:center;cursor:pointer;font-size:18px}
+main{padding:4px 16px 24px;max-width:640px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;margin:0 0 14px;box-shadow:var(--shadow)}
+.card h2{font-size:13px;margin:0 0 10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.row{display:flex;align-items:center;gap:10px}
+.between{justify-content:space-between}
+.grow{flex:1;min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.big{font-size:34px;font-weight:750;letter-spacing:-1px;line-height:1.1}
+.mid{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.pos{color:var(--accent)}.neg{color:var(--danger)}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--blue-soft);color:var(--blue)}
+.pill.g{background:var(--accent-soft);color:var(--accent-d)}
+.pill.w{background:var(--warn-soft);color:var(--warn)}
+.pill.r{background:var(--danger-soft);color:var(--danger)}
+.btn{border:0;border-radius:14px;padding:13px 16px;font-weight:650;cursor:pointer;background:var(--accent);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{transform:scale(.98)}
+.btn.sec{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn.blue{background:var(--blue)}
+.btn.danger{background:var(--danger-soft);color:var(--danger)}
+.btn.block{display:flex;width:100%}
+.btn.sm{padding:8px 12px;border-radius:11px;font-size:13.5px}
+.btn[disabled]{opacity:.5;cursor:default}
+.scan{padding:22px 16px;font-size:18px;border-radius:20px;background:linear-gradient(135deg,var(--accent),var(--accent-d))}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.f{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin:10px 0 4px}
+input[type=text],input[type=number],input[type=search],select{width:100%;border:1px solid var(--border);background:var(--bg);border-radius:12px;padding:11px 12px;outline:none}
+input:focus,select:focus{border-color:var(--blue)}
+.bar{height:10px;border-radius:99px;background:var(--border);overflow:hidden;position:relative}
+.bar>i{display:block;height:100%;border-radius:99px;background:var(--real)}
+.bar>b{position:absolute;top:0;bottom:0;width:2px;background:var(--text);opacity:.55}
+.list>*{border-top:1px solid var(--border)}
+.list>*:first-child{border-top:0}
+.item{display:flex;align-items:center;gap:12px;padding:11px 0}
+.thumb{width:48px;height:48px;border-radius:12px;object-fit:cover;background:var(--border);flex:none}
+.thumb.lg{width:100%;height:auto;max-height:240px;object-fit:contain;border-radius:14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--border);background:var(--bg);border-radius:12px;padding:9px 12px;cursor:pointer;font-weight:600;font-size:13.5px}
+.chip small{display:block;color:var(--muted);font-weight:500;font-size:11.5px}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--card);border-top:1px solid var(--border);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+nav.tabs button{flex:1;border:0;background:none;padding:6px 2px;border-radius:12px;color:var(--muted);font-size:11.5px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav.tabs button span{font-size:20px;line-height:1}
+nav.tabs button.on{color:var(--accent);background:var(--accent-soft)}
+.sheet-bg{position:fixed;inset:0;z-index:50;background:rgba(8,14,20,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet h3{margin:0 0 4px;font-size:18px}
+.toast{position:fixed;left:12px;right:12px;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:60;background:var(--text);color:var(--bg);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:10px;box-shadow:var(--shadow);max-width:616px;margin:0 auto}
+.toast button{border:0;background:rgba(255,255,255,.18);color:inherit;border-radius:10px;padding:7px 11px;font-weight:650;cursor:pointer}
+.toast .grow{font-size:14px}
+.cand{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:1px solid var(--border);background:var(--card);border-radius:16px;padding:10px;margin-bottom:8px;cursor:pointer}
+.cand:active{border-color:var(--accent)}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card)}
+.stepper button{border:0;background:none;width:40px;height:40px;font-size:20px;cursor:pointer}
+.stepper b{min-width:34px;text-align:center}
+.photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.photos .ph{position:relative}
+.photos .ph img{width:70px;height:70px;border-radius:12px;object-fit:cover;display:block}
+.photos .ph button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--danger);color:#fff;font-size:13px;line-height:1;cursor:pointer}
+.empty{text-align:center;padding:26px 10px;color:var(--muted)}
+.empty .em{font-size:38px}
+svg text{font-family:inherit}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 0}
+.switch input{width:22px;height:22px;accent-color:var(--accent)}
+.busy{position:fixed;inset:0;z-index:70;background:rgba(8,14,20,.6);display:grid;place-items:center;color:#fff;font-weight:650}
+.busy>div{background:var(--card);color:var(--text);padding:18px 22px;border-radius:16px;box-shadow:var(--shadow)}
+textarea{width:100%;min-height:150px;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:12px;padding:10px;font:12px/1.4 ui-monospace,Menlo,monospace}
+.note{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:9px 12px;font-size:13px;margin-top:10px}
+.info{background:var(--blue-soft);color:var(--blue);border-radius:12px;padding:9px 12px;font-size:13px;margin-top:10px}
+.off{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;overflow:hidden}
+label.btn{cursor:pointer;text-align:center}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1 id="title">Mi Caja</h1>
+  <button class="icon-btn" id="btnSet" aria-label="Ajustes">⚙️</button>
+</header>
+<main id="view"></main>
+<nav class="tabs" id="tabs">
+  <button data-tab="resumen"><span>📊</span>Resumen</button>
+  <button data-tab="vender"><span>🛒</span>Vender</button>
+  <button data-tab="productos"><span>📦</span>Productos</button>
+  <button data-tab="ventas"><span>🧾</span>Ventas</button>
+</nav>
+<input type="file" class="off" id="fScan" accept="image/*" tabindex="-1">
+<input type="file" class="off" id="fScanC" accept="image/*" capture="environment" tabindex="-1">
+<input type="file" class="off" id="fProdG" accept="image/*" multiple tabindex="-1">
+<input type="file" class="off" id="fProd" accept="image/*" capture="environment" tabindex="-1">
+<input type="file" class="off" id="fBar" accept="image/*" tabindex="-1">
+<input type="file" class="off" id="fImport" accept=".json,application/json" tabindex="-1">
+<div id="layer"></div>
+
+<script>
+(() => {
+'use strict';
+/* ============================ utilidades ============================ */
+const $ = (s, r = document) => r.querySelector(s);
+const MONTHS = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MS = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const pad = n => String(n).padStart(2, '0');
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const monthKey = d => d.getFullYear() + '-' + pad(d.getMonth() + 1);
+const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isFinite(n) ? n : 0; };
+const r2 = n => Math.round(n * 100) / 100;
+const dayKey = ts => { const d = new Date(ts); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+
+/* ============================ estado y persistencia ============================ */
+const DEFAULT = () => ({ v: 1, products: [], sales: [], snaps: {}, settings: { tax: 0, goal: 0, cur: '$', auto: true } });
+let S = DEFAULT();
+let idb = null, saveT = null;
+
+function openIDB() {
+  return new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open('micaja', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  });
+}
+async function loadState() {
+  let data = null;
+  try { idb = await openIDB(); data = await new Promise((res, rej) => { const q = idb.transaction('kv').objectStore('kv').get('state'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }); } catch (e) { idb = null; }
+  if (!data) { try { const t = localStorage.getItem('micaja_state'); if (t) data = JSON.parse(t); } catch (e) {} }
+  if (data && typeof data === 'object') {
+    const d = DEFAULT();
+    S = Object.assign(d, data);
+    S.settings = Object.assign(d.settings, data.settings || {});
+    S.products = Array.isArray(S.products) ? S.products : [];
+    S.sales = Array.isArray(S.sales) ? S.sales : [];
+    S.snaps = S.snaps && typeof S.snaps === 'object' ? S.snaps : {};
+  }
+  try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
+}
+function save() { clearTimeout(saveT); saveT = setTimeout(persist, 250); }
+async function persist() {
+  let ok = false;
+  if (idb) { try { await new Promise((res, rej) => { const tx = idb.transaction('kv', 'readwrite'); tx.objectStore('kv').put(JSON.parse(JSON.stringify(S)), 'state'); tx.oncomplete = res; tx.onerror = () => rej(tx.error); }); ok = true; } catch (e) {} }
+  if (!ok) { try { localStorage.setItem('micaja_state', JSON.stringify(S)); } catch (e) {} }
+}
+
+/* ============================ dinero y calculos ============================ */
+const fmt = n => { n = n || 0; const s = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(Math.abs(n)); return (n < 0 ? '-' : '') + (S.settings.cur || '$') + ' ' + s; };
+const fmtK = n => { const a = Math.abs(n); const s = a >= 1e6 ? (a / 1e6).toFixed(1) + 'M' : a >= 1e3 ? (a / 1e3).toFixed(a >= 1e4 ? 0 : 1) + 'k' : String(Math.round(a)); return (n < 0 ? '-' : '') + s; };
+const netOf = price => price / (1 + (num(S.settings.tax) / 100));
+const unitProfit = p => netOf(p.price) - p.cost;
+const saleProfit = s => s.qty * (s.net - s.cost);
+const salesOf = key => S.sales.filter(s => monthKey(new Date(s.ts)) === key);
+function stats(key) {
+  const a = salesOf(key); let rev = 0, net = 0, cost = 0, profit = 0, units = 0;
+  for (const s of a) { rev += s.qty * s.price; net += s.qty * s.net; cost += s.qty * s.cost; profit += saleProfit(s); units += s.qty; }
+  return { count: a.length, rev, net, cost, profit, units };
+}
+function dim(key) { const [y, m] = key.split('-').map(Number); return new Date(y, m, 0).getDate(); }
+function projection(key) {
+  const st = stats(key), now = new Date(), ck = monthKey(now);
+  if (key < ck) return st.profit;
+  if (key > ck) return 0;
+  return st.profit / now.getDate() * dim(key);
+}
+function recordSnap() {
+  const now = new Date(), key = monthKey(now);
+  if (!stats(key).count) return;
+  S.snaps[key] = S.snaps[key] || {};
+  S.snaps[key][now.getDate()] = r2(projection(key));
+}
+function estFor(key) {
+  const sn = S.snaps[key]; if (!sn) return null;
+  const days = Object.keys(sn).map(Number).sort((a, b) => a - b); if (!days.length) return null;
+  const le = days.filter(d => d <= 15);
+  const day = le.length ? le[le.length - 1] : days[0];
+  return { value: sn[day], day };
+}
+function lastMonths(endKey, n) {
+  const [y, m] = endKey.split('-').map(Number); const out = [];
+  for (let i = n - 1; i >= 0; i--) { const d = new Date(y, m - 1 - i, 1); out.push(monthKey(d)); }
+  return out;
+}
+const keyLabel = key => { const [y, m] = key.split('-').map(Number); return MONTHS[m - 1] + ' ' + y; };
+
+/* ============================ imagenes y huella visual ============================ */
+function readDataURL(file) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(r.error); r.readAsDataURL(file); }); }
+function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('img')); i.src = src; }); }
+async function fileToCanvas(file, max = 720) {
+  const img = await loadImg(await readDataURL(file));
+  const w = img.naturalWidth || img.width, h = img.naturalHeight || img.height, k = Math.min(1, max / Math.max(w, h));
+  const cv = document.createElement('canvas'); cv.width = Math.max(1, Math.round(w * k)); cv.height = Math.max(1, Math.round(h * k));
+  const cx = cv.getContext('2d'); cx.imageSmoothingQuality = 'high'; cx.drawImage(img, 0, 0, cv.width, cv.height);
+  return cv;
+}
+function thumbOf(cv, max = 160) {
+  const k = Math.min(1, max / Math.max(cv.width, cv.height)); const t = document.createElement('canvas');
+  t.width = Math.max(1, Math.round(cv.width * k)); t.height = Math.max(1, Math.round(cv.height * k));
+  const c = t.getContext('2d'); c.imageSmoothingQuality = 'high'; c.drawImage(cv, 0, 0, t.width, t.height);
+  return t.toDataURL('image/jpeg', 0.72);
+}
+function features(cv) {
+  const SZ = 48, w = cv.width, h = cv.height, m = Math.min(w, h), c = Math.floor(m * 0.85), l = Math.floor((w - c) / 2), t = Math.floor((h - c) / 2);
+  const mid = document.createElement('canvas'); mid.width = mid.height = SZ * 4;
+  let x = mid.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(cv, l, t, c, c, 0, 0, SZ * 4, SZ * 4);
+  const sm = document.createElement('canvas'); sm.width = sm.height = SZ;
+  x = sm.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(mid, 0, 0, SZ, SZ);
+  const d = x.getImageData(0, 0, SZ, SZ).data;
+  const hist = new Array(16).fill(0), gray = new Float64Array(SZ * SZ);
+  const cell = SZ / 4, grid = new Float64Array(16 * 3), gc = new Float64Array(16);
+  for (let i = 0; i < SZ; i++) for (let j = 0; j < SZ; j++) {
+    const k = (i * SZ + j) * 4, r = d[k] / 255, g = d[k + 1] / 255, b = d[k + 2] / 255;
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), df = mx - mn, sat = mx > 0 ? df / mx : 0;
+    let hue = 0;
+    if (df > 1e-9) { if (mx === r) hue = (((g - b) / df) % 6 + 6) % 6; else if (mx === g) hue = (b - r) / df + 2; else hue = (r - g) / df + 4; hue /= 6; }
+    if (sat < 0.18) hist[12 + Math.min(3, Math.floor(mx * 4))] += 1; else hist[Math.min(11, Math.floor(hue * 12))] += sat * Math.max(mx, 0.2);
+    gray[i * SZ + j] = 0.299 * r + 0.587 * g + 0.114 * b;
+    const gi = Math.floor(i / cell) * 4 + Math.floor(j / cell);
+    grid[gi * 3] += r; grid[gi * 3 + 1] += g; grid[gi * 3 + 2] += b; gc[gi]++;
+  }
+  const hs = hist.reduce((a, b) => a + b, 0) + 1e-9; for (let i = 0; i < 16; i++) hist[i] /= hs;
+  const gm = [0, 0, 0];
+  for (let i = 0; i < 16; i++) for (let ch = 0; ch < 3; ch++) { grid[i * 3 + ch] /= gc[i]; gm[ch] += grid[i * 3 + ch] / 16; }
+  let gn = 0; for (let i = 0; i < 16; i++) for (let ch = 0; ch < 3; ch++) { grid[i * 3 + ch] -= gm[ch]; gn += grid[i * 3 + ch] ** 2; }
+  gn = Math.sqrt(gn) + 1e-9;
+  const go = new Float64Array(32), half = SZ / 2;
+  for (let i = 1; i < SZ - 1; i++) for (let j = 1; j < SZ - 1; j++) {
+    const gx = gray[i * SZ + j + 1] - gray[i * SZ + j - 1], gy = gray[(i + 1) * SZ + j] - gray[(i - 1) * SZ + j];
+    const mag = Math.hypot(gx, gy); let ang = Math.atan2(gy, gx); ang = ((ang % Math.PI) + Math.PI) % Math.PI;
+    const ob = Math.min(7, Math.floor(ang / Math.PI * 8));
+    go[((i >= half ? 2 : 0) + (j >= half ? 1 : 0)) * 8 + ob] += mag;
+  }
+  let on = 0; for (let i = 0; i < 32; i++) on += go[i] ** 2; on = Math.sqrt(on) + 1e-9;
+  const R = a => Array.from(a, v => Math.round(v * 10000) / 10000);
+  return { h: R(hist), g: R(Array.from(grid, v => v / gn)), o: R(Array.from(go, v => v / on)) };
+}
+function simF(a, b) {
+  let A = 0; for (let i = 0; i < 16; i++) A += Math.sqrt(Math.max(0, a.h[i] * b.h[i]));
+  let B = 0; for (let i = 0; i < a.g.length; i++) B += a.g[i] * b.g[i]; B = Math.max(0, B);
+  let C = 0; for (let i = 0; i < 32; i++) C += a.o[i] * b.o[i]; C = Math.max(0, C);
+  return 0.4 * A + 0.3 * B + 0.3 * C;
+}
+function rank(f) {
+  const out = [];
+  for (const p of S.products) {
+    if (!p.refs || !p.refs.length) continue;
+    let best = 0; for (const r of p.refs) best = Math.max(best, simF(f, r.f));
+    out.push({ p, s: best });
+  }
+  return out.sort((a, b) => b.s - a.s);
+}
+const T_AUTO = 0.80, M_AUTO = 0.06;
+async function readBarcode(cv) {
+  try {
+    if (!('BarcodeDetector' in window)) return null;
+    const det = new BarcodeDetector();
+    const r = await det.detect(cv);
+    return r && r[0] && r[0].rawValue ? String(r[0].rawValue) : null;
+  } catch (e) { return null; }
+}
+function dataURLtoBlob(u) { const [h, b] = u.split(','); const mime = (h.match(/:(.*?);/) || [])[1] || 'image/jpeg'; const bin = atob(b); const a = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return new Blob([a], { type: mime }); }
+const canvasBlob = (cv, q = 0.8) => new Promise(res => cv.toBlob(b => res(b), 'image/jpeg', q));
+
+/* ============================ capacidades de la plataforma ============================ */
+let sample = null, canImg = false, imgMax = 0, downloads = null;
+(async () => {
+  try {
+    if (!window.claude || !claude.use) return;
+    downloads = await claude.use('downloads');
+    sample = await claude.use('sample');
+    if (sample) { const l = await sample.limits().catch(() => null); canImg = !!(l && l.images); imgMax = (l && l.images && l.images.maxCount) || 0; }
+  } catch (e) {}
+})();
+
+/* ============================ interfaz ============================ */
+let tab = 'resumen', viewKey = monthKey(new Date());
+const view = $('#view'), layer = $('#layer');
+
+function setTab(t) { tab = t; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); render(); window.scrollTo(0, 0); }
+function render() {
+  $('#title').textContent = ({ resumen: 'Resumen', vender: 'Vender', productos: 'Productos', ventas: 'Ventas' })[tab] || 'Mi Caja';
+  view.innerHTML = ({ resumen: vResumen, vender: vVender, productos: vProductos, ventas: vVentas })[tab]();
+}
+function monthNav() {
+  const cur = monthKey(new Date());
+  return `<div class="row between" style="margin:0 0 12px"><button class="icon-btn" data-act="mprev" aria-label="Mes anterior">‹</button>
+  <div style="text-align:center"><b>${esc(keyLabel(viewKey))}</b>${viewKey === cur ? '<div class="small muted">mes en curso</div>' : '<div class="small muted">mes cerrado</div>'}</div>
+  <button class="icon-btn" data-act="mnext" aria-label="Mes siguiente" ${viewKey >= cur ? 'disabled style="opacity:.35"' : ''}>›</button></div>`;
+}
+
+/* ---------- RESUMEN ---------- */
+function vResumen() {
+  const cur = monthKey(new Date()), isCur = viewKey === cur, st = stats(viewKey), proj = projection(viewKey), goal = num(S.settings.goal);
+  const now = new Date(), day = now.getDate(), D = dim(viewKey), est = estFor(viewKey);
+  let h = monthNav();
+  if (!S.products.length && !S.sales.length) {
+    h += `<div class="card empty"><div class="em">👋</div><b>¡Bienvenido!</b><p>Empezá cargando tus productos con su foto y precio. Después solo vas a sacar una foto al vender.</p><button class="btn" data-act="goProd">Cargar mi primer producto</button></div>`;
+  }
+  const pctOfProj = proj > 0 ? Math.min(100, st.profit / proj * 100) : 0;
+  h += `<div class="card"><h2>${isCur ? 'Ganancia real hasta hoy' : 'Ganancia total del mes'}</h2>
+    <div class="big ${st.profit < 0 ? 'neg' : 'pos'}">${fmt(st.profit)}</div>
+    <div class="small muted" style="margin-top:4px">${st.count} ${st.count === 1 ? 'venta' : 'ventas'} · ${st.units} ${st.units === 1 ? 'unidad' : 'unidades'} · vendiste ${fmt(st.rev)}${isCur ? ` · día ${day} de ${D}` : ''}</div>
+    ${isCur ? `<div style="margin-top:14px"><div class="row between"><span class="small muted">Proyección a fin de mes</span><b>${fmt(proj)}</b></div>
+      <div class="bar" style="margin-top:6px"><i style="width:${pctOfProj.toFixed(1)}%"></i>${goal > 0 ? `<b style="left:${Math.min(98, goal ? Math.min(100, goal / Math.max(proj, goal) * 100) : 0).toFixed(1)}%"></b>` : ''}</div>
+      <div class="small muted" style="margin-top:6px">Si seguís al ritmo actual (${fmt(day ? st.profit / day : 0)} por día). Más confiable desde la segunda semana.</div></div>` : ''}
+    ${goal > 0 ? `<div class="info">Meta del mes: <b>${fmt(goal)}</b> · ${st.profit >= goal ? '¡meta lograda! 🎉' : isCur ? 'proyectás ' + (proj >= goal ? 'superarla' : 'quedar a ' + fmt(goal - proj) + ' de ella') : 'faltaron ' + fmt(goal - st.profit)}</div>` : ''}
+  </div>`;
+  // comparacion estimado vs real
+  const estV = isCur ? (est ? est.value : (st.count ? proj : null)) : (est ? est.value : null);
+  h += `<div class="card"><h2>Estimado vs real</h2>`;
+  if (estV === null) {
+    h += `<p class="muted" style="margin:0">Todavía no hay estimación guardada para este mes. Se genera sola cuando registrás ventas (la app guarda la proyección de cada día).</p>`;
+  } else {
+    const diff = st.profit - estV, pc = estV ? diff / Math.abs(estV) * 100 : 0;
+    const finalVal = isCur ? proj : st.profit;
+    const diffF = finalVal - estV, pcF = estV ? diffF / Math.abs(estV) * 100 : 0;
+    h += `<div class="grid2"><div><div class="small muted">Estimada${est ? ' (día ' + est.day + ')' : ''}</div><div class="mid" style="color:var(--est)">${fmt(estV)}</div></div>
+      <div><div class="small muted">${isCur ? 'Real hasta hoy' : 'Real final'}</div><div class="mid pos">${fmt(st.profit)}</div></div></div>
+      <div style="margin-top:10px">${isCur
+        ? `<span class="pill ${diffF >= 0 ? 'g' : 'w'}">${diffF >= 0 ? '▲' : '▼'} ${fmt(Math.abs(diffF))} (${Math.abs(pcF).toFixed(0)}%)</span> <span class="small muted">proyección actual vs estimada</span>`
+        : `<span class="pill ${diff >= 0 ? 'g' : 'w'}">${diff >= 0 ? '▲ Ganaste ' + fmt(diff) + ' más' : '▼ Ganaste ' + fmt(Math.abs(diff)) + ' menos'} (${Math.abs(pc).toFixed(0)}%)</span> <span class="small muted">de lo estimado</span>`}</div>
+      <div class="small muted" style="margin-top:8px">${isCur && day < 15 ? 'La estimación se va ajustando y queda fija hacia el día 15; ahí empieza la comparación real.' : 'La estimación de cada mes es la proyección guardada hacia el día 15.'}</div>`;
+  }
+  h += `</div>`;
+  // grafico
+  const keys = lastMonths(viewKey, 6);
+  const data = keys.map(k => { const e = estFor(k); const real = stats(k).profit; return { k, est: e ? e.value : (k === cur && stats(k).count ? projection(k) : null), real }; });
+  h += `<div class="card"><h2>Últimos 6 meses</h2>${chart(data)}
+    <div class="row small muted" style="gap:14px;margin-top:6px"><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--est)"></i> Estimada</span><span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--real)"></i> Real</span></div></div>`;
+  // top productos
+  const by = {}; for (const s of salesOf(viewKey)) { const k = s.pid || s.name; by[k] = by[k] || { name: s.name, profit: 0, units: 0 }; by[k].profit += saleProfit(s); by[k].units += s.qty; }
+  const top = Object.values(by).sort((a, b) => b.profit - a.profit).slice(0, 5), mx = Math.max(1, ...top.map(t => Math.abs(t.profit)));
+  if (top.length) h += `<div class="card"><h2>Productos que más ganancia dejan</h2><div class="list">${top.map(t => `<div class="item"><div class="grow"><div class="row between"><b>${esc(t.name)}</b><b class="${t.profit < 0 ? 'neg' : 'pos'}">${fmt(t.profit)}</b></div><div class="bar" style="margin-top:6px;height:7px"><i style="width:${Math.max(3, Math.abs(t.profit) / mx * 100)}%"></i></div><div class="small muted">${t.units} ${t.units === 1 ? 'unidad' : 'unidades'}</div></div></div>`).join('')}</div></div>`;
+  return h;
+}
+function chart(data) {
+  const W = 340, H = 170, pl = 8, pr = 8, pt = 14, pb = 26, n = data.length;
+  const vals = data.flatMap(d => [d.est || 0, d.real || 0]); const mx = Math.max(1, ...vals.map(Math.abs));
+  const gw = (W - pl - pr) / n, bw = Math.min(16, gw / 2 - 3), base = H - pb, hh = base - pt;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Comparación mensual estimada y real"><line x1="${pl}" x2="${W - pr}" y1="${base}" y2="${base}" stroke="var(--border)"/>`;
+  data.forEach((d, i) => {
+    const cx = pl + gw * i + gw / 2;
+    const bar = (v, x, col) => { if (v == null) return ''; const hgt = Math.max(1.5, Math.abs(v) / mx * hh); return `<rect x="${x}" y="${base - hgt}" width="${bw}" height="${hgt}" rx="3" fill="${col}"/><text x="${x + bw / 2}" y="${base - hgt - 3}" text-anchor="middle" font-size="9" fill="var(--muted)">${fmtK(v)}</text>`; };
+    s += bar(d.est, cx - bw - 1, 'var(--est)') + bar(d.real, cx + 1, 'var(--real)');
+    s += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="10.5" fill="var(--muted)">${MS[Number(d.k.split('-')[1]) - 1]}</text>`;
+  });
+  return s + '</svg>';
+}
+
+/* ---------- VENDER ---------- */
+function vVender() {
+  const today = dayKey(Date.now()), ts = S.sales.filter(s => dayKey(s.ts) === today).sort((a, b) => b.ts - a.ts);
+  const tot = ts.reduce((a, s) => a + saleProfit(s), 0);
+  let h = `<div class="card"><label class="btn scan block" for="fScan">📷 Escanear producto con foto</label>
+    <label class="btn sec block" style="margin-top:8px" for="fScanC">Abrir la cámara directamente</label>
+    <p class="small muted" style="margin:10px 0 0">Sacale una foto al producto (o elegila de la galería): la app lo reconoce y suma la venta al mes con su precio.</p></div>`;
+  if (S.products.length) {
+    h += `<div class="card"><h2>Venta rápida (1 toque = 1 unidad)</h2><div class="chips">${S.products.map(p => `<button class="chip" data-act="quick" data-id="${p.id}">${esc(p.name)}<small>${fmt(p.price)}</small></button>`).join('')}</div></div>
+    <div class="card"><h2>Registrar a mano</h2>
+      <label class="f">Producto vendido</label><select id="mSel">${S.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select>
+      <div class="grid2"><div><label class="f">Cantidad</label><input type="number" id="mQty" inputmode="numeric" min="1" value="1"></div>
+      <div><label class="f">Precio de venta (unidad)</label><input type="number" id="mPrice" inputmode="decimal" step="any"></div></div>
+      <div id="mInfo" class="info"></div>
+      <button class="btn block" style="margin-top:12px" data-act="manualSale">Registrar venta</button></div>`;
+  } else {
+    h += `<div class="card empty"><div class="em">📦</div><p>Primero cargá tus productos (con foto y precio) para poder venderlos.</p><button class="btn" data-act="goProd">Ir a Productos</button></div>`;
+  }
+  h += `<div class="card"><div class="row between"><h2 style="margin:0">Ventas de hoy</h2><span class="pill g">${fmt(tot)} ganancia</span></div>
+    ${ts.length ? `<div class="list" style="margin-top:6px">${ts.map(saleRow).join('')}</div>` : '<p class="muted" style="margin:8px 0 0">Todavía no registraste ventas hoy.</p>'}</div>`;
+  return h;
+}
+function saleRow(s) {
+  const p = S.products.find(x => x.id === s.pid), th = p && p.refs && p.refs[0] ? `<img class="thumb" src="${p.refs[0].t}" alt="">` : `<div class="thumb"></div>`;
+  const t = new Date(s.ts);
+  return `<div class="item">${th}<div class="grow"><b>${esc(s.name)}</b> <span class="muted">× ${s.qty}</span><div class="small muted">${pad(t.getHours())}:${pad(t.getMinutes())} · ${fmt(s.qty * s.price)}${s.src === 'foto' ? ' · 📷' : ''}</div></div>
+    <div style="text-align:right"><b class="${saleProfit(s) < 0 ? 'neg' : 'pos'}">${fmt(saleProfit(s))}</b></div><button class="icon-btn" style="width:34px;height:34px;font-size:15px" data-act="delSale" data-id="${s.id}" aria-label="Eliminar venta">🗑️</button></div>`;
+}
+function updateManualInfo() {
+  const sel = $('#mSel'); if (!sel) return; const p = S.products.find(x => x.id === sel.value); if (!p) return;
+  const pr = $('#mPrice'); if (document.activeElement !== pr && !pr.dataset.dirty) pr.value = p.price;
+  const price = num(pr.value), q = Math.max(1, Math.floor(num($('#mQty').value) || 1)), net = netOf(price);
+  $('#mInfo').innerHTML = `Costo <b>${fmt(p.cost)}</b> · Precio neto <b>${fmt(net)}</b> · Precio venta <b>${fmt(price)}</b><br>Ganancia por unidad <b>${fmt(net - p.cost)}</b> · Esta venta <b>${fmt(q * (net - p.cost))}</b>`;
+}
+
+/* ---------- PRODUCTOS ---------- */
+function vProductos() {
+  let h = `<button class="btn block" data-act="newProd" style="margin-bottom:14px">＋ Nuevo producto</button>`;
+  if (!S.products.length) return h + `<div class="card empty"><div class="em">📦</div><p>Cargá cada producto con 1 a 3 fotos, su costo y su precio de venta. Con eso la app lo va a reconocer cuando le saques una foto.</p></div>`;
+  h += `<div class="card"><div class="list">${S.products.map(p => {
+    const u = unitProfit(p), mg = p.price ? u / netOf(p.price) * 100 : 0;
+    return `<div class="item" data-act="editProd" data-id="${p.id}" style="cursor:pointer">${p.refs && p.refs[0] ? `<img class="thumb" src="${p.refs[0].t}" alt="">` : '<div class="thumb"></div>'}
+      <div class="grow"><b>${esc(p.name)}</b><div class="small muted">Costo ${fmt(p.cost)} · Neto ${fmt(netOf(p.price))} · Venta ${fmt(p.price)}</div>
+      <div class="small">${(p.refs || []).length ? `<span class="pill">${p.refs.length} foto${p.refs.length > 1 ? 's' : ''}</span>` : '<span class="pill w">sin foto</span>'}</div></div>
+      <div style="text-align:right"><b class="${u < 0 ? 'neg' : 'pos'}">${fmt(u)}</b><div class="small muted">${mg.toFixed(0)}% margen</div></div></div>`;
+  }).join('')}</div></div>`;
+  return h;
+}
+
+/* ---------- VENTAS (historial) ---------- */
+function vVentas() {
+  const arr = salesOf(viewKey).sort((a, b) => b.ts - a.ts), st = stats(viewKey);
+  let h = monthNav() + `<div class="card"><div class="grid2"><div><div class="small muted">Vendido</div><div class="mid">${fmt(st.rev)}</div></div><div><div class="small muted">Ganancia</div><div class="mid pos">${fmt(st.profit)}</div></div></div>
+   <button class="btn sec sm block" style="margin-top:12px" data-act="exportCsv" ${arr.length ? '' : 'disabled'}>⬇️ Exportar ventas del mes (CSV)</button></div>`;
+  if (!arr.length) return h + `<div class="card empty"><div class="em">🧾</div><p>No hay ventas en este mes.</p></div>`;
+  const groups = {}; arr.forEach(s => (groups[dayKey(s.ts)] = groups[dayKey(s.ts)] || []).push(s));
+  for (const dk of Object.keys(groups)) {
+    const [y, m, d] = dk.split('-').map(Number), g = groups[dk], tot = g.reduce((a, s) => a + saleProfit(s), 0);
+    h += `<div class="card"><div class="row between"><h2 style="margin:0">${d} de ${MONTHS[m - 1]}</h2><span class="pill g">${fmt(tot)}</span></div><div class="list" style="margin-top:6px">${g.map(saleRow).join('')}</div></div>`;
+  }
+  return h;
+}
+
+/* ============================ hojas y avisos ============================ */
+function openSheet(html) { const tt = $('.toast'); if (tt) tt.remove(); layer.innerHTML = `<div class="sheet-bg" data-act="bg"><div class="sheet" role="dialog" aria-modal="true">${html}</div></div>`; }
+function closeSheet() { layer.innerHTML = ''; }
+function busy(msg) { const b = document.createElement('div'); b.className = 'busy'; b.id = 'busy'; b.innerHTML = `<div>${esc(msg)}</div>`; document.body.appendChild(b); }
+function unbusy() { const b = $('#busy'); if (b) b.remove(); }
+let toastT = null;
+function toast(msg, btns = [], ms = 6500) {
+  clearTimeout(toastT); const old = $('.toast'); if (old) old.remove();
+  const t = document.createElement('div'); t.className = 'toast'; t.innerHTML = `<div class="grow">${esc(msg)}</div>`;
+  btns.forEach(([label, fn]) => { const b = document.createElement('button'); b.textContent = label; b.onclick = () => { fn(); t.remove(); }; t.appendChild(b); });
+  document.body.appendChild(t); toastT = setTimeout(() => t.remove(), ms);
+}
+function askConfirm(title, text, okLabel, fn) {
+  openSheet(`<h3>${esc(title)}</h3><p class="muted">${esc(text)}</p><div class="row" style="margin-top:12px"><button class="btn sec grow" data-act="close">Cancelar</button><button class="btn danger grow" id="okc">${esc(okLabel)}</button></div>`);
+  $('#okc').onclick = () => { closeSheet(); fn(); };
+}
+
+/* ============================ ventas ============================ */
+function addSale(p, qty = 1, price = null, src = 'manual') {
+  const pr = price == null ? p.price : price;
+  const s = { id: uid(), pid: p.id, name: p.name, qty, cost: p.cost, price: pr, net: netOf(pr), ts: Date.now(), src };
+  S.sales.push(s); recordSnap(); save(); return s;
+}
+function delSale(id) { S.sales = S.sales.filter(s => s.id !== id); recordSnap(); save(); }
+function afterSale(s, extra = '') {
+  render();
+  const p = S.products.find(x => x.id === s.pid);
+  toast(`✔ ${s.name} · ${fmt(s.price)}${extra}`, [['Deshacer', () => { delSale(s.id); render(); }], ['+1', () => { s.qty += 1; recordSnap(); save(); render(); }]]);
+}
+
+/* ============================ escaneo con foto ============================ */
+async function scanFile(file) {
+  if (!file) return;
+  if (!S.products.length) { toast('Primero cargá tus productos.'); return; }
+  busy('Analizando foto…');
+  try {
+    const cv = await fileToCanvas(file);
+    const code = await readBarcode(cv);
+    if (code) {
+      const p = S.products.find(x => x.barcode && x.barcode === code);
+      if (p) { unbusy(); afterSale(addSale(p, 1, null, 'foto'), ' (código de barras)'); return; }
+    }
+    const f = features(cv), rk = rank(f);
+    unbusy();
+    if (!rk.length) { toast('Tus productos todavía no tienen fotos de referencia.'); return; }
+    const top = rk[0], sec = rk[1];
+    if (S.settings.auto && top.s >= T_AUTO && (!sec || top.s - sec.s >= M_AUTO)) { afterSale(addSale(top.p, 1, null, 'foto'), ` · coincidencia ${Math.round(top.s * 100)}%`); return; }
+    openConfirm(cv, f, rk);
+  } catch (e) { unbusy(); toast('No pude leer esa foto. Probá de nuevo con mejor luz.'); }
+}
+let pend = null;
+function quality(s) { return s >= 0.75 ? ['Muy parecido', 'g'] : s >= 0.6 ? ['Parecido', 'w'] : ['Poco parecido', 'r']; }
+function openConfirm(cv, f, rk) {
+  pend = { cv, f, rk, qty: 1, learn: true, thumb: thumbOf(cv, 240) };
+  drawConfirm();
+}
+function drawConfirm() {
+  const { rk, thumb } = pend, c3 = rk.slice(0, 3);
+  openSheet(`<h3>¿Cuál producto es?</h3><p class="muted small" style="margin:0 0 10px">No estoy 100% seguro. Tocá el correcto para registrar la venta.</p>
+    <img class="thumb lg" src="${thumb}" alt="Foto tomada" style="margin-bottom:12px">
+    ${c3.map(c => { const [q, k] = quality(c.s); return `<button class="cand" data-act="pick" data-id="${c.p.id}">${c.p.refs[0] ? `<img class="thumb" src="${c.p.refs[0].t}" alt="">` : '<div class="thumb"></div>'}<div class="grow"><b>${esc(c.p.name)}</b><div class="small muted">${fmt(c.p.price)}</div></div><span class="pill ${k}">${q}</span></button>`; }).join('')}
+    <label class="f">O elegí otro producto</label><select id="cOther"><option value="">Seleccionar…</option>${S.products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('')}</select>
+    <div class="row between" style="margin-top:12px"><span class="small muted">Cantidad</span><div class="stepper"><button data-act="cq-" aria-label="Menos">−</button><b id="cQty">${pend.qty}</b><button data-act="cq+" aria-label="Más">+</button></div></div>
+    <label class="switch"><span class="small">Guardar esta foto para reconocerlo mejor la próxima vez</span><input type="checkbox" id="cLearn" ${pend.learn ? 'checked' : ''}></label>
+    ${sample && canImg ? `<button class="btn blue block" id="btnAI" data-act="askAI" style="margin-top:6px">✨ Que Claude identifique el producto</button><div id="aiOut"></div>` : ''}
+    <button class="btn sec block" data-act="close" style="margin-top:8px">Cancelar</button>`);
+  const o = $('#cOther'); if (o) o.onchange = () => { if (o.value) pickProduct(o.value); };
+}
+function pickProduct(id) {
+  const p = S.products.find(x => x.id === id); if (!p || !pend) return;
+  const learn = $('#cLearn') ? $('#cLearn').checked : pend.learn, qty = pend.qty;
+  if (learn) { p.refs = p.refs || []; if (p.refs.length >= 6) p.refs.splice(1, 1); p.refs.push({ t: thumbOf(pend.cv, 160), f: pend.f }); }
+  const s = addSale(p, qty, null, 'foto'); pend = null; closeSheet(); afterSale(s);
+}
+async function askAI() {
+  if (!pend || !sample) return;
+  const cands = pend.rk.slice(0, Math.max(1, Math.min(8, imgMax - 1)));
+  const btn = $('#btnAI'), out = $('#aiOut'); btn.disabled = true; out.innerHTML = '<div class="info">Consultando a Claude…</div>';
+  try {
+    const blobs = [await canvasBlob(pend.cv, 0.82), ...cands.map(c => dataURLtoBlob(c.p.refs[0].t))];
+    const list = cands.map((c, i) => `Imagen ${i + 2}: id="${c.p.id}" nombre="${c.p.name}"`).join('\n');
+    const prompt = `Sos el reconocedor de productos de un negocio. La Imagen 1 es una foto nueva de un producto que se está vendiendo. Las siguientes imágenes son las fotos de referencia del catálogo:\n${list}\n\nElegí cuál producto del catálogo es el de la Imagen 1 (puede estar en otro ángulo o con otra luz). Si ninguno coincide claramente, devolvé id null. Respondé SOLO con JSON: {"id": "<id o null>", "confianza": <número entre 0 y 1>, "motivo": "<una frase corta en español>"}`;
+    const r = await sample.json(prompt, { images: blobs, modelTier: 'default', cache: false });
+    const cand = cands.find(c => String(c.p.id) === String(r && r.id));
+    if (cand) {
+      out.innerHTML = `<div class="info"><b>${esc(cand.p.name)}</b> (${Math.round((+r.confianza || 0) * 100)}% de confianza)<br>${esc(r.motivo || '')}</div><button class="btn block" style="margin-top:8px" data-act="pick" data-id="${cand.p.id}">Registrar ${esc(cand.p.name)}</button>`;
+    } else out.innerHTML = `<div class="note">Claude no encontró un producto claramente igual. ${esc((r && r.motivo) || '')} Elegilo vos de la lista.</div>`;
+  } catch (e) {
+    const m = { not_granted: 'No diste permiso para usar Claude.', rate_limited: 'Se alcanzó el límite de uso, probá más tarde.', image_rejected: 'Claude no pudo leer la imagen.' }[e && e.code] || 'No se pudo consultar a Claude ahora.';
+    out.innerHTML = `<div class="note">${esc(m)}</div>`; btn.disabled = false;
+  }
+}
+
+/* ============================ formulario de producto ============================ */
+let form = null;
+function openProduct(id) {
+  const p = id ? S.products.find(x => x.id === id) : null;
+  form = { id: p ? p.id : null, name: p ? p.name : '', cost: p ? p.cost : '', price: p ? p.price : '', barcode: p ? (p.barcode || '') : '', refs: p ? (p.refs || []).map(r => ({ ...r })) : [] };
+  drawProduct();
+}
+function drawProduct() {
+  openSheet(`<h3>${form.id ? 'Editar producto' : 'Nuevo producto'}</h3>
+    <label class="f">Nombre del producto</label><input type="text" id="pName" value="${esc(form.name)}" placeholder="Ej: Yerba 1 kg" autocomplete="off">
+    <div class="grid2"><div><label class="f">Precio de costo</label><input type="number" id="pCost" inputmode="decimal" step="any" value="${esc(form.cost)}" placeholder="0"></div>
+    <div><label class="f">Precio de venta</label><input type="number" id="pPrice" inputmode="decimal" step="any" value="${esc(form.price)}" placeholder="0"></div></div>
+    <div class="info" id="pInfo"></div>
+    <label class="f">Fotos del producto (1 a 3 recomendadas, desde distintos ángulos)</label>
+    <div class="photos" id="pPhotos">${form.refs.map((r, i) => `<div class="ph"><img src="${r.t}" alt="Foto ${i + 1}"><button data-act="rmPhoto" data-i="${i}" aria-label="Quitar foto">×</button></div>`).join('')}</div>
+    <div class="row" style="margin-top:8px"><label class="btn sec sm grow" for="fProdG">📷 Sacar o elegir foto</label><label class="btn sec sm grow" for="fProd">Cámara directa</label></div>
+    <label class="f">Código de barras (opcional)</label>
+    <div class="row"><input type="text" id="pBar" value="${esc(form.barcode)}" placeholder="Si lo tiene" inputmode="numeric" class="grow"><label class="btn sec sm" for="fBar">Leer de foto</label></div>
+    <div class="row" style="margin-top:16px">${form.id ? '<button class="btn danger" data-act="delProd">Eliminar</button>' : ''}<button class="btn sec grow" data-act="close">Cancelar</button><button class="btn grow" data-act="saveProd">Guardar</button></div>`);
+  updateProdInfo();
+}
+function syncForm() { if (!$('#pName')) return; form.name = $('#pName').value; form.cost = $('#pCost').value; form.price = $('#pPrice').value; form.barcode = $('#pBar').value.trim(); }
+function updateProdInfo() {
+  const el = $('#pInfo'); if (!el) return; const c = num($('#pCost').value), v = num($('#pPrice').value), n = netOf(v);
+  el.innerHTML = `Precio neto: <b>${fmt(n)}</b>${num(S.settings.tax) ? ` (sin ${num(S.settings.tax)}% de impuesto)` : ''}<br>Ganancia por unidad: <b class="${n - c < 0 ? 'neg' : ''}">${fmt(n - c)}</b>${v ? ` · margen ${(n ? (n - c) / n * 100 : 0).toFixed(0)}%` : ''}`;
+}
+async function addPhotos(files) {
+  syncForm();
+  for (const f of Array.from(files || [])) {
+    if (form.refs.length >= 6) break;
+    try { const cv = await fileToCanvas(f); form.refs.push({ t: thumbOf(cv, 160), f: features(cv) }); } catch (e) { toast('No pude leer una de las fotos.'); }
+  }
+  drawProduct();
+}
+function saveProduct() {
+  syncForm(); const name = form.name.trim(), price = num(form.price), cost = num(form.cost);
+  if (!name) { toast('Poné el nombre del producto.'); return; }
+  if (!(price > 0)) { toast('Poné el precio de venta.'); return; }
+  const data = { name, cost, price, barcode: form.barcode, refs: form.refs };
+  if (form.id) { Object.assign(S.products.find(p => p.id === form.id), data); }
+  else S.products.push({ id: uid(), ...data, created: Date.now() });
+  save(); closeSheet(); form = null; render();
+  toast(form === null && !data.refs.length ? 'Guardado. Agregale una foto para poder escanearlo.' : '✔ Producto guardado');
+}
+
+/* ============================ ajustes, copias y exportacion ============================ */
+function openSettings() {
+  openSheet(`<h3>Ajustes</h3>
+    <label class="f">Impuesto incluido en el precio de venta (%) — para calcular el precio neto</label><input type="number" id="sTax" inputmode="decimal" step="any" value="${esc(S.settings.tax)}">
+    <label class="f">Meta de ganancia mensual (opcional)</label><input type="number" id="sGoal" inputmode="decimal" step="any" value="${esc(S.settings.goal || '')}" placeholder="0">
+    <label class="f">Símbolo de moneda</label><input type="text" id="sCur" maxlength="4" value="${esc(S.settings.cur)}">
+    <label class="switch"><span>Registrar solo, sin preguntar, cuando la foto coincide muy bien<br><span class="small muted">Siempre podés deshacer.</span></span><input type="checkbox" id="sAuto" ${S.settings.auto ? 'checked' : ''}></label>
+    <div class="note">Los cambios de impuesto afectan los precios netos de ventas futuras; las ventas ya registradas conservan sus valores.</div>
+    <h3 style="margin-top:18px">Copia de seguridad</h3>
+    <p class="muted small" style="margin:0 0 8px">Tus datos se guardan en este dispositivo. Hacé una copia de vez en cuando.</p>
+    <div class="row"><button class="btn sec sm grow" data-act="exportJson">⬇️ Exportar copia</button><label class="btn sec sm grow" for="fImport">⬆️ Importar copia</label></div>
+    <button class="btn danger sm block" style="margin-top:10px" data-act="wipe">Borrar todos los datos</button>
+    <div class="row" style="margin-top:16px"><button class="btn block" data-act="saveSet">Guardar ajustes</button></div>`);
+}
+async function offerFile(name, data, mimeNote) {
+  if (downloads) {
+    try { await downloads.save({ filename: name, data }); toast('✔ Archivo listo'); return; }
+    catch (e) { if (e && e.code === 'declined') return; }
+  }
+  try {
+    const blob = new Blob([data], { type: 'text/plain;charset=utf-8' }), a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500); toast('✔ Archivo descargado'); return;
+  } catch (e) {}
+  openSheet(`<h3>${esc(name)}</h3><p class="muted small">Tu navegador no permite descargar directo desde acá. Copiá este texto y pegalo en un archivo ${esc(mimeNote)}.</p><textarea id="tx" readonly>${esc(data)}</textarea><div class="row" style="margin-top:10px"><button class="btn sec grow" data-act="close">Cerrar</button><button class="btn grow" id="cp">Copiar</button></div>`);
+  $('#cp').onclick = async () => { const t = $('#tx'); t.select(); try { await navigator.clipboard.writeText(t.value); toast('Copiado'); } catch (e) { document.execCommand && document.execCommand('copy'); toast('Copiado'); } };
+}
+function csvOf(key) {
+  const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+  const rows = [['Fecha', 'Hora', 'Producto', 'Cantidad', 'Costo unit.', 'Precio neto unit.', 'Precio venta unit.', 'Total vendido', 'Ganancia', 'Origen']];
+  salesOf(key).sort((a, b) => a.ts - b.ts).forEach(s => { const d = new Date(s.ts); rows.push([dayKey(s.ts), pad(d.getHours()) + ':' + pad(d.getMinutes()), s.name, s.qty, r2(s.cost), r2(s.net), r2(s.price), r2(s.qty * s.price), r2(saleProfit(s)), s.src]); });
+  return '\ufeff' + rows.map(r => r.map(q).join(',')).join('\r\n');
+}
+async function doImport(file) {
+  try {
+    const d = JSON.parse(await file.text());
+    if (!d || !Array.isArray(d.products) || !Array.isArray(d.sales)) throw new Error('bad');
+    askConfirm('Importar copia', `Se reemplazarán tus datos actuales por la copia (${d.products.length} productos, ${d.sales.length} ventas).`, 'Reemplazar', () => {
+      S = Object.assign(DEFAULT(), d); S.settings = Object.assign(DEFAULT().settings, d.settings || {}); save(); render(); toast('✔ Copia importada');
+    });
+  } catch (e) { toast('Ese archivo no es una copia válida.'); }
+}
+
+/* ============================ eventos ============================ */
+document.addEventListener('click', e => {
+  const tb = e.target.closest('#tabs button'); if (tb) { setTab(tb.dataset.tab); return; }
+  if (e.target.id === 'btnSet' || e.target.closest('#btnSet')) { openSettings(); return; }
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const act = el.dataset.act, id = el.dataset.id;
+  if (act === 'bg') { if (e.target === el) closeSheet(); return; }
+  switch (act) {
+    case 'close': closeSheet(); pend = null; form = null; break;
+    case 'mprev': { const [y, m] = viewKey.split('-').map(Number); viewKey = monthKey(new Date(y, m - 2, 1)); render(); break; }
+    case 'mnext': { const [y, m] = viewKey.split('-').map(Number); const k = monthKey(new Date(y, m, 1)); if (k <= monthKey(new Date())) { viewKey = k; render(); } break; }
+    case 'goProd': setTab('productos'); break;
+    case 'quick': { const p = S.products.find(x => x.id === id); if (p) afterSale(addSale(p, 1, null, 'manual')); break; }
+    case 'manualSale': { const p = S.products.find(x => x.id === $('#mSel').value); if (!p) break; const q = Math.max(1, Math.floor(num($('#mQty').value) || 1)), pr = num($('#mPrice').value); if (!(pr > 0)) { toast('Poné el precio de venta.'); break; } afterSale(addSale(p, q, pr, 'manual')); break; }
+    case 'delSale': askConfirm('Eliminar venta', 'Se va a quitar esta venta del registro.', 'Eliminar', () => { delSale(id); render(); }); break;
+    case 'newProd': openProduct(null); break;
+    case 'editProd': openProduct(id); break;
+    case 'rmPhoto': syncForm(); form.refs.splice(Number(el.dataset.i), 1); drawProduct(); break;
+    case 'saveProd': saveProduct(); break;
+    case 'delProd': { const pid = form && form.id; askConfirm('Eliminar producto', 'Las ventas ya registradas se conservan.', 'Eliminar', () => { S.products = S.products.filter(p => p.id !== pid); save(); form = null; render(); }); break; }
+    case 'pick': pickProduct(id); break;
+    case 'cq-': if (pend) { pend.qty = Math.max(1, pend.qty - 1); $('#cQty').textContent = pend.qty; } break;
+    case 'cq+': if (pend) { pend.qty += 1; $('#cQty').textContent = pend.qty; } break;
+    case 'askAI': askAI(); break;
+    case 'exportCsv': offerFile(`ventas-${viewKey}.csv`, csvOf(viewKey), 'CSV'); break;
+    case 'exportJson': offerFile(`mi-caja-copia-${dayKey(Date.now())}.json`, JSON.stringify(S), 'JSON'); break;
+    case 'wipe': askConfirm('Borrar todo', 'Se eliminan productos, fotos y ventas de este dispositivo. No se puede deshacer.', 'Borrar todo', () => { S = DEFAULT(); save(); render(); toast('Datos borrados'); }); break;
+    case 'saveSet': S.settings.tax = Math.max(0, num($('#sTax').value)); S.settings.goal = Math.max(0, num($('#sGoal').value)); S.settings.cur = $('#sCur').value.trim() || '$'; S.settings.auto = $('#sAuto').checked; save(); closeSheet(); render(); break;
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'pCost' || e.target.id === 'pPrice') updateProdInfo();
+  if (e.target.id === 'mPrice') { e.target.dataset.dirty = '1'; updateManualInfo(); }
+  if (e.target.id === 'mQty') updateManualInfo();
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'mSel') { const pr = $('#mPrice'); pr.dataset.dirty = ''; updateManualInfo(); }
+});
+const takeFiles = e => { const a = Array.from(e.target.files || []); e.target.value = ''; return a; };
+$('#fScan').onchange = e => scanFile(takeFiles(e)[0]);
+$('#fScanC').onchange = e => scanFile(takeFiles(e)[0]);
+$('#fProd').onchange = e => addPhotos(takeFiles(e));
+$('#fProdG').onchange = e => addPhotos(takeFiles(e));
+$('#fImport').onchange = e => { const f = takeFiles(e)[0]; if (f) doImport(f); };
+$('#fBar').onchange = async e => {
+  const f = takeFiles(e)[0]; if (!f) return; syncForm(); busy('Leyendo código…');
+  try { const code = await readBarcode(await fileToCanvas(f, 1280)); unbusy(); if (code) { form.barcode = code; drawProduct(); toast('Código leído: ' + code); } else toast('No pude leer el código. Escribilo a mano.'); }
+  catch (er) { unbusy(); toast('No pude leer la foto.'); }
+};
+new MutationObserver(() => { if ($('#mSel')) updateManualInfo(); }).observe(view, { childList: true });
+
+/* ============================ inicio ============================ */
+(async () => {
+  await loadState();
+  recordSnap(); save();
+  setTab('resumen');
+})();
+})();
+</script>
+<script>
+if ('serviceWorker' in navigator && /^https?:/.test(location.protocol)) {
+  addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
